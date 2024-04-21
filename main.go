@@ -20,6 +20,9 @@ var fiberConfig = fiber.Config{
 	},
 }
 
+func tes() {
+
+}
 func main() {
 
 	listenAddr := flag.String("listenAddr", ":5000", "application port")
