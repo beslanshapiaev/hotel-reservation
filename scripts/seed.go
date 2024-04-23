@@ -19,11 +19,12 @@ var (
 	ctx        = context.Background()
 )
 
-func seedHotel(name, location string) {
+func seedHotel(name, location string, rating int) {
 	hotel := types.Hotel{
 		Name:     name,
 		Location: location,
 		Rooms:    make([]primitive.ObjectID, 0, 2),
+		Rating:   rating,
 	}
 	res, err := hotelStore.Insert(context.Background(), &hotel)
 	if err != nil {
@@ -31,29 +32,29 @@ func seedHotel(name, location string) {
 	}
 	rooms := []types.Room{
 		{
-			HotelID:   res.ID,
-			Type:      types.SingleRoomType,
-			BasePrice: 99.9,
+			HotelID: res.ID,
+			Size:    "small",
+			Price:   99.9,
 		},
 		{
-			HotelID:   res.ID,
-			Type:      types.DoubleRoomType,
-			BasePrice: 150.9,
+			HotelID: res.ID,
+			Size:    "medium",
+			Price:   150.9,
 		},
 		{
-			HotelID:   res.ID,
-			Type:      types.SeaSideRoomType,
-			BasePrice: 200.9,
+			HotelID: res.ID,
+			Size:    "kingsize",
+			Price:   200.9,
 		},
 		{
-			HotelID:   res.ID,
-			Type:      types.DeluxeRoomType,
-			BasePrice: 600,
+			HotelID: res.ID,
+			Size:    "medium",
+			Price:   600,
 		},
 		{
-			HotelID:   res.ID,
-			Type:      types.DeluxeRoomType,
-			BasePrice: 60500,
+			HotelID: res.ID,
+			Size:    "kingsize",
+			Price:   60500,
 		},
 	}
 	for _, r := range rooms {
@@ -65,9 +66,9 @@ func seedHotel(name, location string) {
 }
 
 func main() {
-	seedHotel("Beluccia", "France")
-	seedHotel("The cozy hotel", "Spain")
-	seedHotel("Moscow", "Moscow")
+	seedHotel("Beluccia", "France", 3)
+	seedHotel("The cozy hotel", "Spain", 4)
+	seedHotel("Moscow", "Moscow", 5)
 	fmt.Println("seeding the database")
 }
 

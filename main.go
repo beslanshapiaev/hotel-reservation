@@ -28,15 +28,34 @@ func main() {
 		log.Fatal(err)
 	}
 
-	userHandler := api.NewUserHandler(db.NewMongoUserStore(client, db.DBURI))
+	var (
+		userStore  = db.NewMongoUserStore(client, db.DBNAME)
+		hotelStore = db.NewMongoHotelStore(client)
+		roomStore  = db.NewMongoRoomStore(client, hotelStore)
 
-	app := fiber.New(fiberConfig)
-	apiv1 := app.Group("/api/v1/")
+		store = &db.Store{
+			User:  userStore,
+			Hotel: hotelStore,
+			Room:  roomStore,
+		}
 
+		userHandler  = api.NewUserHandler(userStore)
+		hotelHandler = api.NewHotelHandler(store)
+		app          = fiber.New(fiberConfig)
+		apiv1        = app.Group("/api/v1/")
+	)
+
+	//user handlers
 	apiv1.Post("/user", userHandler.HandlePostUser)
 	apiv1.Put("/user/:id", userHandler.HandlePutUser)
 	apiv1.Get("/user", userHandler.HandleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
 	apiv1.Delete("/user/:id", userHandler.HandleDeleteUser)
+
+	//hotel handlers
+	apiv1.Get("/hotel", hotelHandler.HandleGetHotels)
+	apiv1.Get("/hotel/:id", hotelHandler.HandleGetHotel)
+	apiv1.Get("/hotel/:id/rooms", hotelHandler.HandleGetRooms)
+
 	app.Listen(*listenAddr)
 }
